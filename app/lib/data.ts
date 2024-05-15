@@ -1,3 +1,4 @@
+// "use client"
 import { sql } from '@vercel/postgres';
 import {
   CustomerField,
@@ -10,6 +11,7 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 import { unstable_noStore as noStore } from 'next/cache';
+// import { useState } from 'react';
 
 export async function fetchRevenue() {
   noStore()
@@ -40,8 +42,7 @@ export async function fetchLatestInvoices() {
       SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
       FROM invoices
       JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
+      ORDER BY invoices.date DESC`;
 
     const latestInvoices = data.rows.map((invoice) => ({
       ...invoice,
@@ -226,6 +227,20 @@ export async function fetchFilteredCustomers(query: string) {
     console.error('Database Error:', err);
     throw new Error('Failed to fetch customer table.');
   }
+}
+export async function fetchPrinter() {
+  // const [data, setData] = useState([]);
+  try {
+    const response = await fetch('http://172.28.1.23/data/ipaddress/?data=top5print');
+    const data = await response.json();
+    // setData(jsonData);
+    console.log(data);
+    return data;
+  } catch (err) {
+    console.error('Database Error:', err);
+    throw new Error('Failed to fetch customer table.');
+  }
+
 }
 
 export async function getUser(email: string) {
